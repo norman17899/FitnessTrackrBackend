@@ -38,8 +38,20 @@ async function getUser({ username, password }) {
 }
 
 async function getUserById(userId) {
+  try {
+    const { rows: [ user ] } = await client.query(`
+      SELECT id
+      FROM mytablename
+      WHERE id=${ userId }
+    `);
 
+   delete user.password
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }
+
 
 async function getUserByUsername(userName) {
   try {

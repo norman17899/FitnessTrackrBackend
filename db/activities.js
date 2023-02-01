@@ -5,7 +5,7 @@ async function createActivity({ name, description }) {
   // return the new activity
 try {
   const {rows: [activity]} = await client.query(`
-    INSERT INTO activities (name, decription)
+    INSERT INTO activities (name, description)
     VALUES($1, $2)
     RETURNING *;
   `, [name, description]);

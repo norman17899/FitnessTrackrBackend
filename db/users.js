@@ -9,7 +9,7 @@ async function createUser({ username, password }) {
   // const isValid = await bcrypt.compare(password, hashedPassword)
  try {
     const {rows: [user]} = await client.query(`
-      INSERT INTO mytablename (username, password)
+      INSERT INTO users (username, password)
       VALUES($1, $2)
       RETURNING *;
     `, [username, password]);
@@ -41,7 +41,7 @@ async function getUserById(userId) {
   try {
     const { rows: [ user ] } = await client.query(`
       SELECT id
-      FROM mytablename
+      FROM users
       WHERE id=${ userId }
     `);
 
@@ -57,7 +57,7 @@ async function getUserByUsername(userName) {
   try {
     const { rows: [user] } = await client.query(`
         SELECT *
-        FROM mytablename
+        FROM users
         WHERE username=$1
     `, [userName]);
 

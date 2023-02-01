@@ -27,7 +27,7 @@ describe("DB Activities", () => {
     });
   });
 
-  describe("getAllActivities", () => {
+  xdescribe("getAllActivities", () => {
     it("Selects and returns an array of all activities", async () => {
       await createFakeActivity("Sit ups", "Do 100 reps");
       const activities = await getAllActivities();

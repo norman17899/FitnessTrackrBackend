@@ -9,11 +9,12 @@ try {
     VALUES($1, $2)
     RETURNING *;
   `, [name, description]);
-  return activity;
+    return activity;
 } 
 catch (error) {
+  console.log(error)
   throw error
-}
+ }
 }
 
 async function getAllActivities() {

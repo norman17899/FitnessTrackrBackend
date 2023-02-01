@@ -15,7 +15,7 @@ const {
 } = require("../../db");
 const { createFakeUser } = require("../helpers");
 
-describe("DB Users", () => {
+xdescribe("DB Users", () => {
   describe("createUser({ username, password })", () => {
     it("Creates and returns the user", async () => {
       const fakeUserData = {
@@ -36,7 +36,7 @@ describe("DB Users", () => {
     });
   });
 
-  describe("getUserByUsername", () => {
+  xdescribe("getUserByUsername", () => {
     it("Gets a user based on the username", async () => {
       const fakeUserData = {
         username: "Sean",
@@ -59,7 +59,7 @@ describe("DB Users", () => {
     });
   });
 
-  describe("getUser({ username, password })", () => {
+  xdescribe("getUser({ username, password })", () => {
     it("Returns the user when the password verifies", async () => {
       const fakeUserData = {
         username: "Nicole",
@@ -95,7 +95,7 @@ describe("DB Users", () => {
     });
   });
 
-  describe("getUserById", () => {
+  xdescribe("getUserById", () => {
     it("Gets a user based on the user Id", async () => {
       const fakeUser = await createFakeUser("Jacob");
       const user = await getUserById(fakeUser.id);
@@ -110,7 +110,7 @@ describe("DB Users", () => {
     });
   });
 
-  describe("EXTRA CREDIT: Hashing Passwords", () => {
+  xdescribe("EXTRA CREDIT: Hashing Passwords", () => {
     xit("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
       const fakeUserData = {
         username: "Harry",

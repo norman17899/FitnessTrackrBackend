@@ -27,6 +27,7 @@ async function getAllActivities() {
 
     return rows;
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }
@@ -41,6 +42,7 @@ async function getActivityById(id) {
     return activity;
 
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }
@@ -55,6 +57,7 @@ async function getActivityByName(name) {
     return activity;
 
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }

@@ -19,7 +19,19 @@ async function getRoutineById(id) {}
 
 async function getRoutinesWithoutActivities() {}
 
-async function getAllRoutines() {}
+async function getAllRoutines() {
+  try {
+    const { rows } = await client.query(`
+      SELECT * 
+      FROM routines
+    `); 
+    return rows;
+  }
+    catch (error) {
+    console.log(error)
+    throw error;
+}
+}
 
 async function getAllPublicRoutines() {}
 

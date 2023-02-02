@@ -6,7 +6,7 @@ const {
   createActivity,
   createRoutine,
   getAllActivities,
-  getRoutinesWithoutActivities,
+  //getRoutinesWithoutActivities,
   addActivityToRoutine
 } = require('./index')
 
@@ -55,7 +55,8 @@ async function createTables() {
       "routineId" INTEGER REFERENCES routines(id),
       "activityId" INTEGER REFERENCES activities(id),
       duration INTEGER,
-      count INTEGER
+      count INTEGER,
+      UNIQUE ("routineId", "activityId")
       
     );
   `);

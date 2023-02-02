@@ -84,6 +84,7 @@ async function updateActivity({ id, ...fields }) {
 
     return activity 
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }

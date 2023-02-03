@@ -22,16 +22,45 @@ async function getRoutinesWithoutActivities() {}
 async function getAllRoutines() {
   try {
     const { rows } = await client.query(`
-      SELECT * 
+      SELECT routines.*, count, duration, ACTIVITIES.name as "activityName", activities.Id as "activityId", description, username as "creatorName"
       FROM routines
+        JOIN routine_activities ON routines.id = routine_activities."routineId"
+        JOIN activities ON activities.id = routine_activities."activitiyId"
+        JOIN users ON "creatorId" = users.Id
     `); 
-    return rows;
+    attatchActivitiesToRoutines(rows);
   }
     catch (error) {
     console.log(error)
     throw error;
 }
-}
+};
+const attatchActivitiesToRoutines = (routines) => {
+const routinesById = {} 
+ routines.forEach(routine => { 
+   if (!routinesById[routine.id]) {
+    routinesById[routine.id] = {
+      id: routine.id,
+      creatorId: routine.creatorId,
+      isPublic: routine.isPublic,
+      name: routine.name,
+      goal: routine.goal,
+      activities: []
+    };
+  }
+  const activity = {
+    name: routine.activityName,
+    id: routine.activityId,
+    description: routine.description,
+    count: routine.count,
+    duration: routine.duration,
+  };
+  routinesById[routine.id].activities.push(activity);
+});
+
+return routinesById;
+};
+getAllRoutines()
 
 async function getAllPublicRoutines() {}
 

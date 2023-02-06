@@ -45,10 +45,10 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
   try {
     const { rows } = await client.query(`
-      SELECT routines.*, count, duration, ACTIVITIES.name as "activityName", activities.Id as "activityId", description, username as "creatorName"
+      SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
       FROM routines
         JOIN routine_activities ON routines.id = routine_activities."routineId"
-        JOIN activities ON activities.id = routine_activities."activitiyId"
+        JOIN activities ON activities.id = routine_activities."activityId"
         JOIN users ON "creatorId" = users.Id
     `); 
     let routines = attatchActivitiesToRoutines(rows);
@@ -80,6 +80,7 @@ const routinesById = {}
     description: routine.description,
     count: routine.count,
     duration: routine.duration,
+    routineActivityId: routine.routineActivityId,
   };
   routinesById[routine.id].activities.push(activity);
 });

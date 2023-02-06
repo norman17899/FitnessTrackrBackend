@@ -15,9 +15,23 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
    }
 }
 
-async function getRoutineById(id) {}
+async function getRoutineById(id) {
+  try {
+    const { row: [routine] } = await client.query(`
+      SELECT * FROM routines
+      WHERE id=$1;
+    `, [id]);
 
-async function getRoutinesWithoutActivities() {}
+    return routine;
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+async function getRoutinesWithoutActivities() {
+  
+}
 
 async function getAllRoutines() {
   try {
@@ -28,13 +42,16 @@ async function getAllRoutines() {
         JOIN activities ON activities.id = routine_activities."activitiyId"
         JOIN users ON "creatorId" = users.Id
     `); 
-    attatchActivitiesToRoutines(rows);
+    let routines = attatchActivitiesToRoutines(rows);
+    routines = Object.values(routines);
+    return routines;
   }
     catch (error) {
     console.log(error)
     throw error;
-}
+  }
 };
+
 const attatchActivitiesToRoutines = (routines) => {
 const routinesById = {} 
  routines.forEach(routine => { 
@@ -45,7 +62,7 @@ const routinesById = {}
       isPublic: routine.isPublic,
       name: routine.name,
       goal: routine.goal,
-      activities: []
+      activities: [],
     };
   }
   const activity = {
@@ -60,7 +77,7 @@ const routinesById = {}
 
 return routinesById;
 };
-getAllRoutines()
+//getAllRoutines()
 
 async function getAllPublicRoutines() {}
 

@@ -6,7 +6,7 @@ const {
   createActivity,
   createRoutine,
   getAllActivities,
-  //getRoutinesWithoutActivities,
+  getRoutinesWithoutActivities,
   addActivityToRoutine
 } = require('./index')
 

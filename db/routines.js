@@ -62,31 +62,33 @@ async function getAllRoutines() {
 };
 
 const attatchActivitiesToRoutines = (routines) => {
-const routinesById = {} 
- routines.forEach(routine => { 
-   if (!routinesById[routine.id]) {
-    routinesById[routine.id] = {
-      id: routine.id,
-      creatorId: routine.creatorId,
-      isPublic: routine.isPublic,
-      name: routine.name,
-      goal: routine.goal,
-      activities: [],
+  const routinesById = {} 
+   routines.forEach(routine => { 
+     if (!routinesById[routine.id]) {
+      routinesById[routine.id] = {
+        id: routine.id,
+        creatorId: routine.creatorId,
+        creatorName: routine.creatorName,      
+        isPublic: routine.isPublic,
+        name: routine.name,
+        goal: routine.goal,
+        activities: [],
+      };
+    }
+    const activity = {
+      name: routine.activityName,
+      id: routine.activityId,
+      description: routine.description,
+      count: routine.count,
+      duration: routine.duration,
+      routineActivityId: routine.routineActivityId,
+      routineId: routine.id
     };
-  }
-  const activity = {
-    name: routine.activityName,
-    id: routine.activityId,
-    description: routine.description,
-    count: routine.count,
-    duration: routine.duration,
-    routineActivityId: routine.routineActivityId,
+    routinesById[routine.id].activities.push(activity);
+  });
+  
+  return routinesById;
   };
-  routinesById[routine.id].activities.push(activity);
-});
-
-return routinesById;
-};
 //getAllRoutines()
 
 async function getAllPublicRoutines() {}

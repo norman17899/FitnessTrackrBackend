@@ -41,16 +41,16 @@ async function getRoutinesWithoutActivities() {
     throw error;
    }
   }
-  
+
+const allRoutines = `SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
+FROM routines
+  JOIN routine_activities ON routines.id = routine_activities."routineId"
+  JOIN activities ON activities.id = routine_activities."activityId"
+  JOIN users ON "creatorId" = users.Id`
+
 async function getAllRoutines() {
   try {
-    const { rows } = await client.query(`
-      SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
-      FROM routines
-        JOIN routine_activities ON routines.id = routine_activities."routineId"
-        JOIN activities ON activities.id = routine_activities."activityId"
-        JOIN users ON "creatorId" = users.Id
-    `); 
+    const { rows } = await client.query(allRoutines); 
     let routines = attatchActivitiesToRoutines(rows);
     routines = Object.values(routines);
     return routines;
@@ -94,11 +94,7 @@ const attatchActivitiesToRoutines = (routines) => {
 async function getAllPublicRoutines() {
   try {
     const { rows } = await client.query(`
-      SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
-      FROM routines
-        JOIN routine_activities ON routines.id = routine_activities."routineId"
-        JOIN activities ON activities.id = routine_activities."activityId"
-        JOIN users ON "creatorId" = users.Id
+      ${ allRoutines }
         WHERE "isPublic" = true
     `); 
     let routines = attatchActivitiesToRoutines(rows);
@@ -115,11 +111,7 @@ async function getAllPublicRoutines() {
 async function getAllRoutinesByUser({ username }) {
   try {
     const { rows } = await client.query(`
-      SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
-      FROM routines
-        JOIN routine_activities ON routines.id = routine_activities."routineId"
-        JOIN activities ON activities.id = routine_activities."activityId"
-        JOIN users ON "creatorId" = users.Id
+      ${ allRoutines }
         WHERE username=$1
     `, [username]); 
     let routines = attatchActivitiesToRoutines(rows);
@@ -135,11 +127,7 @@ async function getAllRoutinesByUser({ username }) {
 async function getPublicRoutinesByUser({ username }) {
   try {
     const { rows } = await client.query(`
-      SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
-      FROM routines
-        JOIN routine_activities ON routines.id = routine_activities."routineId"
-        JOIN activities ON activities.id = routine_activities."activityId"
-        JOIN users ON "creatorId" = users.Id
+      ${ allRoutines }
         WHERE username=$1 AND "isPublic" = true
     `, [username]); 
     let routines = attatchActivitiesToRoutines(rows);

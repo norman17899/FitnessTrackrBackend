@@ -183,13 +183,18 @@ async function updateRoutine({ id, ...fields }) {
 }
 
 async function destroyRoutine(id) {
-   await client.query(`
-   DELETE routines, routine_activities
-   FROM routines
-   INNER JOIN routine_activities ON routine.id = routine_activities.id
-   WHERE routine_activites.id=$1
-   
-   `,[id])
+  try {
+    const {rows: ra} = await client.query(`
+    DELETE FROM routine_activities
+    WHERE "routineId"=$1`
+    , [id])
+    const {rows: routines} = await client.query(`
+    DELETE FROM routines
+    WHERE id=$1`
+    , [id])
+  } catch (error) {
+    throw error
+  }
 }
 
 module.exports = {

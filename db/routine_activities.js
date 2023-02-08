@@ -50,7 +50,23 @@ async function getRoutineActivitiesByRoutine({ id }) {
 }
 
 async function updateRoutineActivity({ id, ...fields }) {
-  
+  const setString = Object.keys(fields).map(
+    (key, index) => `"${ key }"=$${ index + 1 }`
+  ).join(', ');
+
+  try {
+    const { rows: [ routineActivity ] } = await client.query(`
+      UPDATE routine_activities
+      SET ${ setString }
+      WHERE id=${ id }
+      RETURNING *;
+    `, Object.values(fields));
+
+    return routineActivity
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
 }
 
 async function destroyRoutineActivity(id) {}

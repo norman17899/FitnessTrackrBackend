@@ -42,6 +42,7 @@ async function getRoutinesWithoutActivities() {
    }
   }
 
+// allRoutines variable. Combines the tables of routines, activities, and users
 const allRoutines = `SELECT routines.*, count, duration, activities.name as "activityName", activities.id as "activityId", description, username as "creatorName", routine_activities.id AS "routineActivityId"
 FROM routines
   JOIN routine_activities ON routines.id = routine_activities."routineId"

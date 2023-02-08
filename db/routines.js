@@ -184,9 +184,10 @@ async function updateRoutine({ id, ...fields }) {
 
 async function destroyRoutine(id) {
    await client.query(`
-   SELECT from routine_activ
-   WHERE id=$1
-   DELETE from routine_activities
+   DELETE routines, routine_activities
+   FROM routines
+   INNER JOIN routine_activities ON routine.id = routine_activities.id
+   WHERE routine_activites.id=$1
    
    `,[id])
 }

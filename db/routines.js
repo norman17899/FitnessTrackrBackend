@@ -193,6 +193,7 @@ async function destroyRoutine(id) {
     WHERE id=$1`
     , [id])
   } catch (error) {
+    console.log(error)
     throw error
   }
 }

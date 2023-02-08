@@ -25,13 +25,33 @@ async function getRoutineActivityById(id) {
 
     return routineActivity;
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }
 
-async function getRoutineActivitiesByRoutine({ id }) {}
+async function getRoutineActivitiesByRoutine({ id }) {
+  try {
+    const { rows: routineActivity } = await client.query(`
+      SELECT id 
+      FROM routine_activities 
+      WHERE "routineId"=${ id };
+    `);
 
-async function updateRoutineActivity({ id, ...fields }) {}
+    const routines = await Promise.all(routineActivity.map(
+      routine => getRoutineActivityById( routine.id )
+    ));
+
+    return routines;
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+}
+
+async function updateRoutineActivity({ id, ...fields }) {
+  
+}
 
 async function destroyRoutineActivity(id) {}
 

@@ -69,7 +69,12 @@ async function updateRoutineActivity({ id, ...fields }) {
   }
 }
 
-async function destroyRoutineActivity(id) {}
+async function destroyRoutineActivity(id) {
+  await client.query(`
+    DELETE FROM routine_activities
+    WHERE id=$1
+    `,[id])
+}
 
 async function canEditRoutineActivity(routineActivityId, userId) {}
 

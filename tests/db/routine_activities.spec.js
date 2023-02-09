@@ -55,7 +55,7 @@ describe("DB Routine Activities", () => {
     });
   });
 
-  xdescribe("getRoutineActivityById", () => {
+  describe("getRoutineActivityById", () => {
     it("should return the routine activity by id", async () => {
       const fakeRoutineActivity = await createFakeRoutineActivity();
       const routineActivity = await getRoutineActivityById(
@@ -110,7 +110,7 @@ describe("DB Routine Activities", () => {
   });
 
   describe("destroyRoutineActivity(id)", () => {
-    xit("remove routine_activity from database", async () => {
+    it("remove routine_activity from database", async () => {
       const fakeRoutineActivity = await createFakeRoutineActivity();
 
       const deletedRoutine = await destroyRoutineActivity(

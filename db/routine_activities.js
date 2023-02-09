@@ -70,13 +70,32 @@ async function updateRoutineActivity({ id, ...fields }) {
 }
 
 async function destroyRoutineActivity(id) {
-  await client.query(`
-    DELETE FROM routine_activities
-    WHERE id=$1
-    `,[id])
+  // need to complete this
+  const response = await client.query(`
+      SELECT * FROM routine_activities
+      WHERE id=$1
+      `, [id]);
+    await client.query(`
+      DELETE FROM routine_activities
+      WHERE id=$1
+      `, [id]);
+   return response.rows[0];
 }
 
-async function canEditRoutineActivity(routineActivityId, userId) {}
+
+async function canEditRoutineActivity(routineActivityId, userId) {
+
+   await client.query {
+    `SELECT routine_activities.id AS "routineActivityId"
+  FROM routine_activities
+  JOIN users ON "creatorId" = users.Id`
+      return true
+  }
+   where 
+      }
+    // check to see if ids match
+    // if ids match great
+    // if ids dont match oh no
 
 module.exports = {
   getRoutineActivityById,

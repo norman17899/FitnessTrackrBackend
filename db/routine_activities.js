@@ -84,18 +84,20 @@ async function destroyRoutineActivity(id) {
 
 
 async function canEditRoutineActivity(routineActivityId, userId) {
+  try {
+    const { rows: [ editRoutine ] } = await client.query(`
+      SELECT routine_activities.*, routines."creatorId"
+      FROM routines
+      JOIN routine_activities ON routines.id = routine_activities."routineId"
+      WHERE routine_activities.id = $1
+    `, [routineActivityId]);
 
-   await client.query {
-    `SELECT routine_activities.id AS "routineActivityId"
-  FROM routine_activities
-  JOIN users ON "creatorId" = users.Id`
-      return true
+    return editRoutine.creatorId === userId;
+  } catch (error) {
+    console.log(error)
+    throw error;
   }
-   where 
-      }
-    // check to see if ids match
-    // if ids match great
-    // if ids dont match oh no
+}
 
 module.exports = {
   getRoutineActivityById,

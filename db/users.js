@@ -11,6 +11,7 @@ async function createUser({ username, password }) {
     const {rows: [user]} = await client.query(`
       INSERT INTO users (username, password)
       VALUES($1, $2)
+      ON CONFLICT (username) DO NOTHING
       RETURNING *;
     `, [username, password]);
     delete user.password;
@@ -27,7 +28,7 @@ async function getUser({ username, password }) {
   
   try {
     const user = await getUserByUsername(username);
-    if (user.password === password) {
+    if (user && user.password === password) {
       delete user.password
       return user
     }

@@ -31,6 +31,14 @@ router.use(async (req, res, next) => {
     }
 });
 
+router.use((req, res, next) => {
+    if (req.user) {
+        console.log("User is set:", req.user);
+    }
+
+    next();
+});
+
 // GET /api/health
 router.get('/health', async (req, res, next) => {
     try{
@@ -58,6 +66,9 @@ const { getUserById } = require('../db');
 router.use('/routine_activities', routineActivitiesRouter);
 
 router.use((error, req, res, next) => {
+    if (error.name == "UnauthorizedUserError") {
+        res.status(403);
+    }
     res.send({
       name: error.name,
       message: error.message

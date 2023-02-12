@@ -11,6 +11,11 @@ const {
     getAllRoutinesByUser,
     getUser,
 } = require("../db");
+const client = require("../db/client");
+
+router.use("/", async(req, res, next) => {
+    next();
+})
 
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
@@ -95,6 +100,25 @@ router.post('/login', async (req, res, next) => {
     }
 })
 // GET /api/users/me
+const isLoggedIn = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization;
+        if (!token) {
+            throw "not authorized";
+        }
+        const {id} = jwt.verify(token, process.env.JWT_SECRET);
+        const response = await client.query(`
+            SELECT * 
+            FROM USERS
+            WHERE id =$1
+        `, [id]);
+        const user = reqponse.row[0];
+        req.user = user;
+        next();
+    } catch (error) {
+        next (error);
+    }
+}
 router.get('/me', async (req, res, next) => {
     try {
         if (req.user) {

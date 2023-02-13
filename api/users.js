@@ -2,16 +2,44 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET } = process.env
 
 const {
     createUser,
     getUserByUsername,
-    getPublicRoutinesByUsers,
+    getPublicRoutinesByUser,
     getAllRoutinesByUser,
+    getUserById,
 } = require("../db");
 
 const { tokenAuth, sliceToken } = require("./utils");
+
+router.use(async (req, res, next) => {
+  const prefix = 'Bearer ';
+  const auth = req.header('Authorization');
+
+  if (!auth) { // nothing to see here
+    next();
+  } else if (auth.startsWith(prefix)) {
+    const token = auth.slice(prefix.length);
+
+    try {
+      const { id } = jwt.verify(token, JWT_SECRET);
+
+      if (id) {
+        req.user = await getUserById(id);
+        next();
+      }
+    } catch ({ name, message }) {
+      next({ name, message });
+    }
+  } else {
+    next({
+      name: 'AuthorizationHeaderError',
+      message: `Authorization token must start with ${ prefix }`
+    });
+  }
+});
 
 
 // POST /api/users/register
@@ -49,7 +77,7 @@ router.post('/register', async (req, res, next) => {
 
         res.send({
             message: 'Thank you for signing up',
-            token,
+            token: token,
             user: creatingUser
         });
     } catch ({ name, message }) {
@@ -76,7 +104,6 @@ router.post('/login', async (req, res, next) => {
                 id: user.id, 
                 username
             }, process.env.JWT_SECRET);
-
             res.send({
                 message: "you're logged in!",
                 token,
@@ -117,26 +144,23 @@ router.get('/me', tokenAuth, async (req, res, next) => {
    })
 
 // GET /api/users/:username/routines
-router.get("/:username/routines", async (req, res, next) => {
-    try {
-      const { username } = req.params;
-      const user = await getUserByUsername(username);
-      if (!user) {
-        next({
-          name: "NoUser",
-          message: `Error looking up user ${username}`,
-        });
-      } else if (req.user && user.id === req.user.id) {
-        const routines = await getAllRoutinesByUser({ username: username });
-        res.send(routines);
-      } else {
-        const publicRoutines = await getPublicRoutinesByUser({
-          username: username,
-        });
-        res.send(publicRoutines);
-      }
-    } catch (e) {
-      next(e);
+router.get('/:username/routines', tokenAuth, async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const userInfo = sliceToken(req);
+
+    if(username === userInfo.username){
+      const  routines = await getAllRoutinesByUser({username});
+
+      res.send(routines);
     }
-  });
+    
+    const publicRoutines = await getPublicRoutinesByUser({username});
+
+    res.send(publicRoutines);
+} catch (error) {
+  next(error)
+}
+  
+})
 module.exports = router;

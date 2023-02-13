@@ -9,13 +9,10 @@ const {
     getUserByUsername,
     getPublicRoutinesByUsers,
     getAllRoutinesByUser,
-    getUser,
 } = require("../db");
-const client = require("../db/client");
 
-router.use("/", async(req, res, next) => {
-    next();
-})
+const { tokenAuth, sliceToken } = require("./utils");
+
 
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
@@ -47,9 +44,8 @@ router.post('/register', async (req, res, next) => {
         const token = jwt.sign({
             id: creatingUser.id,
             username
-        }, process.env.JWT_SECRET, {
-            expiresIn: '1w'
-        });
+        }, process.env.JWT_SECRET
+        );
 
         res.send({
             message: 'Thank you for signing up',
@@ -79,9 +75,7 @@ router.post('/login', async (req, res, next) => {
             const token = jwt.sign({
                 id: user.id, 
                 username
-            }, process.env.JWT_SECRET, {
-                expiresIn: '1w'
-            });
+            }, process.env.JWT_SECRET);
 
             res.send({
                 message: "you're logged in!",
@@ -100,41 +94,49 @@ router.post('/login', async (req, res, next) => {
     }
 })
 // GET /api/users/me
-const isLoggedIn = async (req, res, next) => {
-    try {
-        const token = req.headers.authorization;
-        if (!token) {
-            throw "not authorized";
-        }
-        const {id} = jwt.verify(token, process.env.JWT_SECRET);
-        const response = await client.query(`
-            SELECT * 
-            FROM USERS
-            WHERE id =$1
-        `, [id]);
-        const user = reqponse.row[0];
-        req.user = user;
-        next();
-    } catch (error) {
-        next (error);
-    }
-}
-router.get('/me', async (req, res, next) => {
-    try {
-        if (req.user) {
-            res.send(req.user);
-        } else {
-            res.status(401)
-            res.send({
-                error: "MissingUserError",
-                message: "You must be logged in to perform this action",
-                name: "MIssingUserError"
-            });
-        }
-    } catch (error) {
-        next(error)
-    }
-});
-// GET /api/users/:username/routines
+router.get('/me', tokenAuth, async (req, res, next) => {
 
+    try{
+     const userInfo = sliceToken(req);
+    
+     const user = await getUserByUsername(userInfo.username)
+   
+     if (user) {
+       res.send({
+         id: user.id, 
+         username: user.username
+       });
+     }
+     else {
+         res.send('User unavailable');   
+     }
+   } catch (error) {
+     next(error);
+   }
+   
+   })
+
+// GET /api/users/:username/routines
+router.get("/:username/routines", async (req, res, next) => {
+    try {
+      const { username } = req.params;
+      const user = await getUserByUsername(username);
+      if (!user) {
+        next({
+          name: "NoUser",
+          message: `Error looking up user ${username}`,
+        });
+      } else if (req.user && user.id === req.user.id) {
+        const routines = await getAllRoutinesByUser({ username: username });
+        res.send(routines);
+      } else {
+        const publicRoutines = await getPublicRoutinesByUser({
+          username: username,
+        });
+        res.send(publicRoutines);
+      }
+    } catch (e) {
+      next(e);
+    }
+  });
 module.exports = router;

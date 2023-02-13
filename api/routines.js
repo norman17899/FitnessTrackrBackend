@@ -9,24 +9,16 @@ const {
     destroyRoutine,
     addActivityToRoutine,
     getRoutineActivitiesByRoutine,
+    getAllPublicRoutines
   } = require("../db");
 
 
 // GET /api/routines
 router.get("/", async (req, res, next) => {
     try {
-      const allRoutines = await getAllRoutines();
+      const publicRoutines = await getAllPublicRoutines();
   
-      const routines = allRoutines.filter((routines) => {
-        return (
-          routines.creatorId &&
-          routines.isPublic &&
-          routines.name &&
-          routines.goal
-        );
-      });
-  
-      res.send(routines);
+      res.send(publicRoutines);
     } catch ({ name, message }) {
       next({ name, message });
     }

@@ -7,6 +7,8 @@ const {
     getActivityByName, 
     updateActivity, 
     getPublicRoutinesByActivity} = require("../db");
+const { JWT_SECRET } = process.env;
+const jwt = require('jsonwebtoken')
 
 // GET /api/activities/:activityId/routines
 router.get("/:activityId/routines", async(req, res, next) => {
@@ -21,6 +23,7 @@ router.get("/:activityId/routines", async(req, res, next) => {
             });
         }
         else {
+          //   const publicRoutines = await getPublicRoutinesByActivity(activity)
           const publicRoutines = await getPublicRoutinesByActivity(activity)
             res.send(publicRoutines)
         }
@@ -31,20 +34,49 @@ router.get("/:activityId/routines", async(req, res, next) => {
   })
 // GET /api/activities
 router.get('/', async (req, res, next) => {
-    const allActivities = req.params.allActivities
+    const activities = await getAllActivities();
+
+    try { 
+        res.send(activities);
+    } catch (error) {
+        next(error)
+    }
+});
+
+// POST /api/activities
+router.post('/', async(req, res, next) =>{
+    const prefix = 'Bearer ';
+    const auth = req.header('Authorization');
+
     try{
-        const returnedActivities = await getAllActivities(allActivities);
-        
-       
-        res.send(
-            returnedActivities
-    )
-    }catch ({name, message}){
-        next({name, message})
+        const token =auth.slice(prefix.length);
+        const user = jwt.verify(token, JWT_SECRET);
+        const {name, description}=req.body;
+        if(user)
+        {
+            const allActivities = await getAllActivities();
+            
+            const exists = allActivities.find(element => element.name === name);
+            
+            if(exists)
+            {
+                next({
+                    name:"ActivityExists",
+                    message:`An activity with name ${name} already exists`
+                })
+            }
+            else{
+                const newActivity = await createActivity({name, description});
+
+                res.send(newActivity);
+            }
+
+        }
+
+    }catch(error){
+        next(error);
     }
 })
-// POST /api/activities
-
 // PATCH /api/activities/:activityId
 
 module.exports = router;

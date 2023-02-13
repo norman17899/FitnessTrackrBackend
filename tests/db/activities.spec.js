@@ -14,7 +14,7 @@ const {
 } = require("../../db");
 const { createFakeActivity } = require("../helpers");
 
-xdescribe("DB Activities", () => {
+describe("DB Activities", () => {
   describe("createActivity({ name, description })", () => {
     it("Creates and returns the new activity", async () => {
       const activityToCreate = {
@@ -27,7 +27,7 @@ xdescribe("DB Activities", () => {
     });
   });
 
-  xdescribe("getAllActivities", () => {
+  describe("getAllActivities", () => {
     it("Selects and returns an array of all activities", async () => {
       await createFakeActivity("Sit ups", "Do 100 reps");
       const activities = await getAllActivities();
@@ -38,7 +38,7 @@ xdescribe("DB Activities", () => {
     });
   });
 
-  xdescribe("getActivityById", () => {
+  describe("getActivityById", () => {
     it("Gets activities by their id", async () => {
       const fakeActivity = await createFakeActivity("Crunches", "Do 40 reps");
       const activity = await getActivityById(fakeActivity.id);
@@ -48,7 +48,7 @@ xdescribe("DB Activities", () => {
     });
   });
 
-  xdescribe("getActivityByName", () => {
+  describe("getActivityByName", () => {
     it("Gets an activity by it's name", async () => {
       const fakeActivity = await createFakeActivity(
         "Power Walking",
@@ -59,7 +59,7 @@ xdescribe("DB Activities", () => {
     });
   });
 
-  xdescribe("updateActivity", () => {
+  describe("updateActivity", () => {
     it("Updates name without affecting the ID. Returns the updated Activity.", async () => {
       const fakeActivity = await createFakeActivity(
         "Baseball",

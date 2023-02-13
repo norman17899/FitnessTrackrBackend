@@ -15,7 +15,7 @@ const {
 } = require("../../db");
 const { createFakeUser } = require("../helpers");
 
-xdescribe("DB Users", () => {
+describe("DB Users", () => {
   describe("createUser({ username, password })", () => {
     it("Creates and returns the user", async () => {
       const fakeUserData = {
@@ -36,7 +36,7 @@ xdescribe("DB Users", () => {
     });
   });
 
-  xdescribe("getUserByUsername", () => {
+  describe("getUserByUsername", () => {
     it("Gets a user based on the username", async () => {
       const fakeUserData = {
         username: "Sean",
@@ -59,7 +59,7 @@ xdescribe("DB Users", () => {
     });
   });
 
-  xdescribe("getUser({ username, password })", () => {
+  describe("getUser({ username, password })", () => {
     it("Returns the user when the password verifies", async () => {
       const fakeUserData = {
         username: "Nicole",
@@ -95,7 +95,7 @@ xdescribe("DB Users", () => {
     });
   });
 
-  xdescribe("getUserById", () => {
+  describe("getUserById", () => {
     it("Gets a user based on the user Id", async () => {
       const fakeUser = await createFakeUser("Jacob");
       const user = await getUserById(fakeUser.id);
